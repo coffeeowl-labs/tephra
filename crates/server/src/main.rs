@@ -2,7 +2,7 @@ use tephra_server::api;
 use tephra_server::discovery;
 use tephra_server::monitor;
 
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
 
 use clap::Parser;
@@ -18,6 +18,11 @@ struct Args {
     /// Port to listen on
     #[arg(short, long, default_value = "9867")]
     port: u16,
+
+    /// Address to listen on (default: all interfaces). Use a LAN address
+    /// (e.g. 192.168.99.201) to keep the agent off other networks such as an IoT VLAN.
+    #[arg(short, long, default_value = "0.0.0.0")]
+    bind: IpAddr,
 
     /// Sampling interval in milliseconds
     #[arg(short, long, default_value = "500")]
@@ -65,7 +70,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     // Start HTTP server
-    let addr = SocketAddr::from(([0, 0, 0, 0], args.port));
+    let addr = SocketAddr::new(args.bind, args.port);
     let app = api::router(app_state);
 
     info!("Listening on http://{}", addr);

@@ -68,6 +68,9 @@ tephra
 
 # Custom settings
 tephra --port 8080 --interval 1000
+
+# Listen on one address only (default is all interfaces), e.g. to keep it off an IoT VLAN
+tephra --bind 192.168.99.201
 ```
 
 ### Systemd Service
